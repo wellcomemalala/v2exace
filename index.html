@@ -2,642 +2,442 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>คากิ - เครื่องแยก</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>นักซิ่ง</title>
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <style>
-    /* ป้องกันการซูมเมื่อแตะปุ่มหรือองค์ประกอบอื่นๆ */
-    html { touch-action: manipulation; }
-    body { font-family: Arial, sans-serif; background-color: #f4f4f4; font-size: 24px; text-align: center; }
-    h1, h2 { color: #333; font-size: 32px; }
-    #tableButtons { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
-    textarea, .comment-input-queue { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; font-size: 18px; box-sizing: border-box; }
-    #tableOrders, #completedOrders, #totalOrders { margin-top: 30px; }
-    #tableOrders p, #completedOrders p, #totalOrders p { margin-bottom: 5px; font-size: 18px; }
-    .order-button, .table-button, .save-comment-button { background-color: #4CAF50; border: none; color: white; padding: 12px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 8px; width: 100%; box-sizing: border-box; touch-action: manipulation; }
-    .table-button { background-color: #008CBA; }
-    .move-button { background-color: #f39c12; }
-    .reservation-button { background-color: #e74c3c; color: white; font-weight: bold; border: 2px solid #c0392b; }
-    .stock-button { background-color: #555; color: white; border: 2px solid #333; }
-    .stock-mode-active { background-color: #ff9800; color: black; border-color: #e65100; font-weight: bold; animation: pulse 1.5s infinite; }
-    .sold-out { background-color: #7f8c8d !important; opacity: 0.6; text-decoration: line-through; color: #bdc3c7 !important; position: relative; }
-    .undo-button { background-color: #f1c40f; color: black; font-weight: bold; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    .complete-button { background-color: #8e44ad; }
-    .save-comment-button { background-color: #5bc0de; padding: 8px 12px; font-size: 14px; width: auto; display: block; margin-top: 5px; }
-    .save-comment-button.saved { background-color: #4CAF50; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #dddddd; text-align: left; padding: 10px; vertical-align: middle; }
-    #tableOrdersTable th, #tableOrdersTable td { text-align: center; }
-    th { background-color: #f2f2f2; }
-    .wait-normal { background-color: white; }
-    .wait-medium { background-color: #fff3cd; }
-    .wait-long { background-color: #f8d7da; }
-    @keyframes flashRed { 0% { background-color: red; } 50% { background-color: white; } 100% { background-color: red; } }
-    .flash-red { animation: flashRed 0.13s ease-out; }
-    @keyframes flashGreen { 0% { background-color: #28a745; } 50% { background-color: white; } 100% { background-color: #28a745; } }
-    .flash-green { animation: flashGreen 0.2s ease-out; }
-    @media (max-width: 767px) {
-      body { font-size: 14px; }
-      h1, h2 { font-size: 22px; }
-      .order-button, .table-button, .save-comment-button { padding: 8px 12px; font-size: 14px; }
-      textarea, .comment-input-queue { font-size: 16px; }
-      #tableOrders p, #completedOrders p, #totalOrders p { font-size: 16px; }
-      table th, table td { padding: 6px; font-size: 12px; }
-      .comment-input-queue { padding: 6px; font-size: 12px; }
-      .save-comment-button { padding: 6px 10px; font-size: 12px; }
-    }
-    #oldTableName, #newTableName { font-size: 20px; padding: 8px; margin: 8px; width: 180px; }
-    #kitchenDisplay { margin: 30px 0; padding: 15px; background-color: #f9f9f9; border-radius: 10px; }
-    .kitchen-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-    .chef-section { background-color: white; padding: 12px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
-    .chef-orders { min-height: 40px; font-size: 16px; line-height: 1.4; }
-    #connectionStatus { position: fixed; top: 10px; right: 10px; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 1000; }
-    .connected { background-color: #4CAF50; color: white; }
-    .disconnected { background-color: #f44336; color: white; }
-    .bottom-action-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; padding: 10px; }
-    .clear-button { background-color: #e74c3c; }
-  </style>
+   <style>
+  /* สไตล์เดิมทั้งหมดของคุณ 100% */
+  html { touch-action: manipulation; }
+  body { font-family: Arial, sans-serif; background-color: #f4f4f4; font-size: 24px; text-align: center; padding: 10px; }
+  h1, h2 { color: #333; font-size: 32px; }
+  #categorySection { margin: 20px 0; }
+  #categoryButtons { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; max-width: 1000px; margin: 0 auto; }
+  .category-button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 20px 15px; text-align: center; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease; touch-action: manipulation; }
+  .category-button.active { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.3); }
+  #backToCategoryBtn { background-color: #95a5a6; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-bottom: 15px; display: none; touch-action: manipulation; }
+  #menuSection { display: none; margin: 20px 0; }
+  .menu-category-title { font-size: 28px; color: #2c3e50; margin-bottom: 15px; font-weight: bold; }
+  #menuButtons { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; max-width: 1200px; margin: 0 auto; }
+  #tableButtons { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  textarea, .comment-input-queue { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; font-size: 18px; box-sizing: border-box; }
+  .order-button, .table-button, .save-comment-button { background-color: #4CAF50; border: none; color: white; padding: 12px 20px; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 8px; width: 100%; box-sizing: border-box; touch-action: manipulation; }
+  .table-button { background-color: #008CBA; }
+  .move-button { background-color: #f39c12; }
+  .reservation-button { background-color: #e74c3c; color: white; font-weight: bold; border: 2px solid #c0392b; }
+  .stock-button { background-color: #555; color: white; border: 2px solid #333; }
+  .sold-out { background-color: #7f8c8d !important; opacity: 0.6; text-decoration: line-through; color: #bdc3c7 !important; position: relative; }
+  .undo-button { background-color: #f1c40f; color: black; font-weight: bold; }
+  .complete-button { background-color: #8e44ad; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  th, td { border: 1px solid #dddddd; text-align: left; padding: 10px; vertical-align: middle; }
+  #tableOrdersTable th, #tableOrdersTable td { text-align: center; }
+  th { background-color: #f2f2f2; }
+  .wait-normal { background-color: white; }
+  .wait-medium { background-color: #fff3cd; }
+  .wait-long { background-color: #f8d7da; }
+  #syncStatusBar { position: fixed; top: 0; left: 0; right: 0; height: 30px; background: linear-gradient(to right, #4CAF50, #45a049); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 1001; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  /* เพิ่มตรงนี้ */
+#syncStatusBar.offline {
+    background: linear-gradient(to right, #e74c3c, #c0392b); /* สีแดง */
+}
+  #selectedItemsDisplay { background-color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .comment-input-selected { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+  .category-blue { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important; color: white !important; }
+  .category-yellow { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%) !important; color: #333 !important; }
+  #kitchenDisplay { margin: 30px 0; padding: 15px; background-color: #f9f9f9; border-radius: 10px; }
+  .kitchen-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+  .chef-section { background-color: white; padding: 12px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+  .chef-orders { min-height: 40px; font-size: 16px; line-height: 1.4; }
+  
+  
+  #oldTableName, #newTableName {
+    font-size: 26px;      /* ขนาดตัวอักษรใหญ่ขึ้น */
+    padding: 12px;        /* เพิ่มความหนาของช่องกรอก */
+    margin: 10px;         /* เว้นระยะห่างระหว่างช่อง */
+    width: 220px;         /* ความกว้างของช่อง */
+    border: 2px solid #008CBA; /* เส้นขอบหนาขึ้นและมีสีน้ำเงิน */
+    border-radius: 8px;   /* ขอบมน */
+    box-sizing: border-box;
+  }
+
+  /* ปรับปุ่มย้ายโต๊ะให้ใหญ่สมดุลกับช่องกรอก */
+  .move-button {
+    font-size: 22px !important;
+    padding: 12px 30px !important;
+    width: auto !important;
+    margin-left: 10px;
+  }
+  
+  
+  
+</style>
 </head>
 <body>
-<div id="connectionStatus" class="connected">เชื่อมต่อแล้ว</div>
-<h1>รับออเดอร์</h1>
 
-<!-- ปุ่มจัดการของหมด -->
-<div style="margin-bottom: 15px;">
+<div id="syncStatusBar">
+  <span id="syncStatusText">เชื่อมต่อแล้ว</span>
+</div>
+
+<div style="margin-top: 35px; margin-bottom: 15px; text-align: right;">
     <button id="stockModeBtn" class="order-button stock-button" onclick="toggleStockMode()" style="width: auto; padding: 10px 20px;">จัดการของหมด (ปิด)</button>
 </div>
 
-<table>
-
-    <tbody>
-        <tr>
-            <td rowspan="2">ของทอด</td>
-			
-
-            <td><button class="order-button" onclick="placeOrder('ปลาเนื้ออ่อน')">ปลาเนื้ออ่อน<span id="quantityปลาเนื้ออ่อน">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ปลานิลแดดเดียว')">ปลานิลแดดเดียว<span id="quantityปลานิลแดดเดียว">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('หมูทอดสมุนไพร')">หมูทอดสมุนไพร<span id="quantityหมูทอดสมุนไพร">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('สะเดาน้ำปลาหวาน')">สะเดาน้ำปลาหวาน<span id="quantityสะเดาน้ำปลาหวาน">0</span></button></td>
-        </tr>
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">คั่ว</td>
-            <td><button class="order-button" onclick="placeOrder('คั่วไก่')">คั่วไก่<span id="quantityคั่วไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('คั่วกบ')">คั่วกบ<span id="quantityคั่วกบ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('คั่วเนื้อ')">คั่วเนื้อ<span id="quantityคั่วเนื้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('คั่วหมู')">คั่วหมู<span id="quantityคั่วหมู">0</span></button></td>
-        </tr>
-        <tr>
-            <td><button class="order-button" onclick="placeOrder('คั่วปลาไหล')">คั่วปลาไหล<span id="quantityคั่วปลาไหล">0</span></button></td>
-			 <td><button class="order-button" onclick="placeOrder('คั่วเครื่องใน')">คั่วเครื่องใน<span id="quantityคั่วเครื่องใน">0</span></button></td>
-            <td colspan="3"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">ต้มแซ่บ</td>
-            <td><button class="order-button" onclick="placeOrder('ต้มแซ่บไก่')">ต้มแซ่บไก่<span id="quantityต้มแซ่บไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ต้มแซ่บเนื้อ')">ต้มแซ่บเนื้อ<span id="quantityต้มแซ่บเนื้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ต้มแซ่บหมู')">ต้มแซ่บหมู<span id="quantityต้มแซ่บหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ต้มแซ่บกระดูกอ่อน')">ต้มแซ่บกระดูกอ่อน<span id="quantityต้มแซ่บกระดูกอ่อน">0</span></button></td>
-        </tr>
-
-
-		  <tr>
-            <td><button class="order-button" onclick="placeOrder('ต้มแซ่บเครื่องใน')">ต้มแซ่บเครื่องใน<span id="quantityต้มแซ่บเครื่องใน">0</span></button></td>
-
-            <td colspan="3"></td>
-        </tr>
-
-
-
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">ปลาช่อน</td>
-            <td><button class="order-button" onclick="placeOrder('ปลาช่อนแป๊ะซะ')">ปลาช่อนแป๊ะซะ<span id="quantityปลาช่อนแป๊ะซะ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ปลาช่อนแวะถัวะ')">ปลาช่อนแวะถัวะ<span id="quantityปลาช่อนแวะถัวะ">0</span></button></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-
-
-		<tr>
-            <td rowspan="2">ปลานึ่ง</td>
-            <td><button class="order-button" onclick="placeOrder('ปลาช่อน นึ่ง')">ปลาช่อน นึ่ง<span id="quantityปลาช่อน นึ่ง">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ปลานิล นึ่ง')">ปลานิล นึ่ง<span id="quantityปลานิล นึ่ง">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ปลาทับทิม นึ่ง')">ปลาทับทิม นึ่ง<span id="quantityปลาทับทิม นึ่ง">0</span></button></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-
-
-        <tr>
-            <td rowspan="2">ผัดเผ็ด</td>
-            <td><button class="order-button" onclick="placeOrder('ผัดเผ็ดหมูป่า')">ผัดเผ็ดหมูป่า<span id="quantityผัดเผ็ดหมูป่า">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ผัดเผ็ดกระดูกหมู')">ผัดเผ็ดกระดูกหมู<span id="quantityผัดเผ็ดกระดูกหมู">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ผัดเผ็ดเครื่องใน')">ผัดเผ็ดเครื่องใน<span id="quantityผัดเผ็ดเครื่องใน">0</span></button></td>
-
-            <td colspan="2"></td>
-        </tr>
-
-				  <tr>
-			<td><button class="order-button" onclick="placeOrder('ผัดเผ็ดนกหน่อไม้')">ผัดเผ็ดนกหน่อไม้<span id="quantityผัดเผ็ดนกหน่อไม้">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ผัดเผ็ดนกใบยี่หร่า')">ผัดเผ็ดนกใบยี่หร่า<span id="quantityผัดเผ็ดนกใบยี่หร่า">0</span></button></td>
-
-            <td colspan="3"></td>
-        </tr>
-
-
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">ลาบ</td>
-            <td><button class="order-button" onclick="placeOrder('ลาบเป็ด')">ลาบเป็ด<span id="quantityลาบเป็ด">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ลาบปลา')">ลาบปลา<span id="quantityลาบปลา">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ลาบปู')">ลาบปู<span id="quantityลาบปู">0</span></button></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">อ่อม</td>
-            <td><button class="order-button" onclick="placeOrder('อ่อมไก่')">อ่อมไก่<span id="quantityอ่อมไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('อ่อมกบ')">อ่อมกบ<span id="quantityอ่อมกบ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('อ่อมหมู')">อ่อมหมู<span id="quantityอ่อมหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('อ่อมเนื้อ')">อ่อมเนื้อ<span id="quantityอ่อมเนื้อ">0</span></button></td>
-        </tr>
-        <tr>
-            <td><button class="order-button" onclick="placeOrder('อ่อมหอย')">อ่อมหอย<span id="quantityอ่อมหอย">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('อ่อมเครื่องใน')">อ่อมเครื่องใน<span id="quantityอ่อมเครื่องใน">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('อ่อมนก')">อ่อมนก<span id="quantityอ่อมนก">0</span></button></td>
-            <td colspan="3"></td>
-        </tr>
-        <tr>
-            <td rowspan="2"style="background-color:#ffeaa7;">แกงป่าผัก</td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าผักไก่')">แกงป่าผักไก่<span id="quantityแกงป่าผักไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าผักหมู')">แกงป่าผักหมู<span id="quantityแกงป่าผักหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าผักเนื้อ')">แกงป่าผักเนื้อ<span id="quantityแกงป่าผักเนื้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าผักปลา')">แกงป่าผักปลา<span id="quantityแกงป่าผักปลา">0</span></button></td>
-        </tr>
-
-
-
-		  <tr>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าผักเครื่องใน')">แกงป่าผักเครื่องใน<span id="quantityแกงป่าผักเครื่องใน">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงป่าผักนก')">แกงป่าผักนก<span id="quantityแกงป่าผักนก">0</span></button></td>
-
-            <td colspan="3"></td>
-        </tr>
-
-
-
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2"style="background-color:#ffeaa7;">แกงป่าหน่อไม้ดอง</td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้ดองไก่')">แกงป่าหน่อไม้ดองไก่<span id="quantityแกงป่าหน่อไม้ดองไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้ดองหมู')">แกงป่าหน่อไม้ดองหมู<span id="quantityแกงป่าหน่อไม้ดองหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้ดองเนื้อ')">แกงป่าหน่อไม้ดองเนื้อ<span id="quantityแกงป่าหน่อไม้ดองเนื้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แสงโสม')">แสงโสม<span id="quantityแสงโสม">0</span></button></td>
-        </tr>
-
-
-
-			  <tr>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้ดองเครื่องใน')">แกงป่าหน่อไม้ดองเครื่องใน<span id="quantityแกงป่าหน่อไม้ดองเครื่องใน">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้ดองนก')">แกงป่าหน่อไม้ดองนก<span id="quantityแกงป่าหน่อไม้ดองนก">0</span></button></td>
-
-            <td colspan="3"></td>
-        </tr>
-
-
-
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2"style="background-color:#ffeaa7;">แกงป่าหน่อไม้สด</td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดไก่')">แกงป่าหน่อไม้สดไก่<span id="quantityแกงป่าหน่อไม้สดไก่">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดหมู')">แกงป่าหน่อไม้สดหมู<span id="quantityแกงป่าหน่อไม้สดหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดเนื้อ')">แกงป่าหน่อไม้สดเนื้อ<span id="quantityแกงป่าหน่อไม้สดเนื้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดปลา')">แกงป่าหน่อไม้สดปลา<span id="quantityแกงป่าหน่อไม้สดปลา">0</span></button></td>
-        </tr>
-
-
-
-			  <tr>
-            <td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดเครื่องใน')">แกงป่าหน่อไม้สดเครื่องใน<span id="quantityแกงป่าหน่อไม้สดเครื่องใน">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงป่าหน่อไม้สดนก')">แกงป่าหน่อไม้สดนก<span id="quantityแกงป่าหน่อไม้สดนก">0</span></button></td>
-
-            <td colspan="3"></td>
-        </tr>
-
-
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">ไข่เจียว</td>
-            <td><button class="order-button" onclick="placeOrder('ไข่เจียวบาว')">ไข่เจียวบาว<span id="quantityไข่เจียวบาว">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ไข่เจียวหมูสับ')">ไข่เจียวหมูสับ<span id="quantityไข่เจียวหมูสับ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ไข่เจียวธรรมดา')">ไข่เจียวธรรมดา<span id="quantityไข่เจียวธรรมดา">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ไข่เจียวไข่มดแดง')">ไข่เจียวไข่มดแดง<span id="quantityไข่เจียวไข่มดแดง">0</span></button></td>
-        </tr>
-        <tr>
-            <td colspan="4"></td>
-        </tr>
-        <tr>
-            <td rowspan="2">แกง</td>
-            <td><button class="order-button" onclick="placeOrder('แกงบอน')">แกงบอน<span id="quantityแกงบอน">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('มะรุม')">มะรุม<span id="quantityมะรุม">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('กระบุก')">กระบุก<span id="quantityกระบุก">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงหอย')">แกงหอย<span id="quantityแกงหอย">0</span></button></td>
-
-
-        </tr>
-
-		<td></td>
-
-		<tr>
-            <td rowspan="2">แกงหน่อไม้ดอง</td>
-			</tr>
-
-
-        <tr>
-            <td><button class="order-button" onclick="placeOrder('แกงไก่หน่อ')">แกงไก่หน่อ<span id="quantityแกงไก่หน่อ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงหมูหน่อ')">แกงหมูหน่อ<span id="quantityแกงหมูหน่อ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงเนื้อหน่อ')">แกงเนื้อหน่อ<span id="quantityแกงเนื้อหน่อ">0</span></button></td>
-
-        </tr>
-
-
-
-		<tr>
-            <td rowspan="2">แกงปลาหน่อไม้ดอง</td>
-			</tr>
-
-
-		<tr>
-            <td><button class="order-button" onclick="placeOrder('แกงปลากดหน่อ')">แกงปลากดหน่อ<span id="quantityแกงปลากดหน่อ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงปลาหลดหน่อ')">แกงปลาหลดหน่อ<span id="quantityแกงปลาหลดหน่อ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงปลานิลหน่อ')">แกงปลานิลหน่อ<span id="quantityแกงปลานิลหน่อ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('แกงปลาเนื้ออ่อนหน่อ')">แกงปลาเนื้ออ่อนหน่อ<span id="quantityแกงปลาเนื้ออ่อนหน่อ">0</span></button></td>
-        </tr>
-
-
-
-		<td></td>
-
-
-		<tr>
-            <td rowspan="2">ผักหวาน</td>
-            <td><button class="order-button" onclick="placeOrder('ผักหวาน')">ผักหวาน<span id="quantityผักหวาน">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ผักหวานไข่มดแดง')">ผักหวานไข่มดแดง<span id="quantityผักหวานไข่มดแดง">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ผักหวานเห็ดเผาะ')">ผักหวานเห็ดเผาะ<span id="quantityผักหวานเห็ดเผาะ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ผักหวานไข่มดแดงใส่เห็ดเผาะ')">ผักหวานไข่มดแดงใส่เห็ดเผาะ<span id="quantityผักหวานไข่มดแดงใส่เห็ดเผาะ">0</span></button></td>
-        </tr>
-        <tr>
-
-            <td></td>
-        </tr>
-
-
-        <tr>
-            <td rowspan="3">อื่นๆ</td>
-            <td><button class="order-button" onclick="placeOrder('ขาหมู')">ขาหมู<span id="quantityขาหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ผัดฉ่าขาหมู')">ผัดฉ่าขาหมู<span id="quantityผัดฉ่าขาหมู">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('หมูปลาร้า')">หมูปลาร้า<span id="quantityหมูปลาร้า">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('หมูน้ำปลา')">หมูน้ำปลา<span id="quantityหมูน้ำปลา">0</span></button></td>
-        </tr>
-        <tr>
-			<td><button class="order-button" onclick="placeOrder('ไก่ปลาร้า')">ไก่ปลาร้า<span id="quantityไก่ปลาร้า">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ไก่น้ำปลา')">ไก่น้ำปลา<span id="quantityไก่น้ำปลา">0</span></button></td>
-
-            <td><button class="order-button" onclick="placeOrder('ข้าว')">ข้าว<span id="quantityข้าว">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ขนม')">ขนม<span id="quantityขนม">0</span></button></td>
-			</tr>
-
-        <tr>
-			<td><button class="order-button" onclick="placeOrder('หงษ์ทอง')">หงษ์ทอง<span id="quantityหงษ์ทอง">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('สามชั้นใบยี่หร่า')">สามชั้นใบยี่หร่า<span id="quantityสามชั้นใบยี่หร่า">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('เมนูพิเศษ')">เมนูพิเศษ<span id="quantityเมนูพิเศษ">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ของแถม')">ของแถม<span id="quantityของแถม">0</span></button></td>
-        </tr>
-		
-		<tr>
-            <td rowspan="3">เมนูพิเศษ</td>
-            <td><button class="order-button" onclick="placeOrder('หมกหม้อ')">หมกหม้อ<span id="quantityหมกหม้อ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ขี้เหล็ก')">ขี้เหล็ก<span id="quantityขี้เหล็ก">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ต้มจืด')">ต้มจืด<span id="quantityต้มจืด">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ทอดมัน')">ทอดมัน<span id="quantityทอดมัน">0</span></button></td>
-            
-        </tr>
-		
-		        <tr>
-			<td><button class="order-button" onclick="placeOrder('หมกปลานิล')">หมกปลานิล<span id="quantityหมกปลานิล">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ไก่หลงทาง')">ไก่หลงทาง<span id="quantityไก่หลงทาง">0</span></button></td>
-			
-        </tr>
-		
-		 <td></td>
-		
-		<tr>
-            <td rowspan="4">ส้มตำ</td>
-            <td><button class="order-button" onclick="placeOrder('ตำลาว')">ตำลาว<span id="quantityตำลาว">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำปูปลาล้าปูนิ่ง')">ตำปูปลาล้าปูนิ่ง<span id="quantityตำปูปลาล้าปูนิ่ง">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำปูปลาล้าปูดอง')">ตำปูปลาล้าปูดอง<span id="quantityตำปูปลาล้าปูดอง">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ตำแตง')">ตำแตง<span id="quantityตำแตง">0</span></button></td>
-            
-        </tr>
-		
-		        <tr>
-			<td><button class="order-button" onclick="placeOrder('ตำถั่ว')">ตำถั่ว<span id="quantityตำถั่ว">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำไทย')">ตำไทย<span id="quantityตำไทย">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำโคราช')">ตำโคราช<span id="quantityตำโคราช">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ตำซั่ว')">ตำซั่ว<span id="quantityตำซั่ว">0</span></button></td>
-			
-        </tr>
-		
-		
-		<tr>
-			<td><button class="order-button" onclick="placeOrder('ตำป่า')">ตำป่า<span id="quantityตำป่า">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำหมูยอ')">ตำหมูยอ<span id="quantityตำหมูยอ">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำมาม่า')">ตำมาม่า<span id="quantityตำมาม่า">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ตำไทยไข่เค็ม')">ตำไทยไข่เค็ม<span id="quantityตำไทยไข่เค็ม">0</span></button></td>
-			
-        </tr>
-		
-		
-		 
-			<tr>
-			<td><button class="order-button" onclick="placeOrder('ตำโพดไข่เค็ม')">ตำโพดไข่เค็ม<span id="quantityตำโพดไข่เค็ม">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำกุ้งสด')">ตำกุ้งสด<span id="quantityตำกุ้งสด">0</span></button></td>
-            <td><button class="order-button" onclick="placeOrder('ตำกุ้งสุกกกก')">ตำกุ้งสุกกกก<span id="quantityตำกุ้งสุกกกก">0</span></button></td>
-			<td><button class="order-button" onclick="placeOrder('ตำทะเล')">ตำทะเล<span id="quantityตำทะเล">0</span></button></td>
-			
-        </tr>
-		
-		
-		
-		
-    </tbody>
-</table>
-
-<div id="selectedItems">
-    <h2>อาหารที่เลือกไว้</h2>
-    <table id="selectedItemsTable">
-        <thead>
-            <tr>
-                <th>รายการ</th>
-                <th>จำนวน</th>
-                <th>เพิ่ม/ลด</th>
-                <th>คอมเมนต์</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<div id="categorySection">
+  <h2>เลือกหมวดหมู่</h2>
+  <div id="categoryButtons"></div>
 </div>
 
-<h2>บันทึกโต๊ะ</h2>
-<div id="tableButtons">
-    <button class="table-button reservation-button" onclick="saveReservationTable()">โต๊ะจอง (แซงคิว)</button>
-    <!-- ปุ่มโต๊ะ 000 - 25 -->
-    <script>
-        for(let i=0; i<=25; i++) {
-            let t = i===0 ? '000' : i;
-            document.write(`<button class="table-button" onclick="saveTable('${t}')">${i===0 ? '000' : 'โต๊ะ '+i}</button>`);
-        }
-    </script>
+<div id="menuSection">
+  <button id="backToCategoryBtn" onclick="backToCategory()">← กลับไปเลือกหมวดหมู่</button>
+  <h2 class="menu-category-title" id="currentCategoryName"></h2>
+  <div id="menuButtons"></div>
 </div>
+
+<div id="selectedItemsDisplay">
+  <h2>อาหารที่เลือกไว้</h2>
+  <table id="selectedItemsTable">
+    <thead>
+      <tr><th>รายการ</th><th>จำนวน</th><th>เพิ่ม/ลด</th><th>คอมเมนต์</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div id="tableButtons"></div>
 
 <h2>เปลี่ยนชื่อโต๊ะ</h2>
-<input type="text" id="oldTableName" placeholder="ชื่อโต๊ะเก่า">
-<input type="text" id="newTableName" placeholder="ชื่อโต๊ะใหม่">
-<button class="table-button" onclick="changeTableName()">เปลี่ยนชื่อ</button>
+<input type="text" id="oldTableName" placeholder="โต๊ะเดิม">
+<input type="text" id="newTableName" placeholder="โต๊ะใหม่">
+<button class="order-button move-button" onclick="changeTableName()">ย้ายโต๊ะ</button>
+
+<div id="tableOrders">
+  <h2>คิว</h2>
+  <table id="tableOrdersTable">
+    <thead>
+      <tr><th>โต๊ะ</th><th>เมนู</th><th>จำนวน</th><th>คอมเมนต์</th><th>รอ</th><th>สถานะ</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <div id="kitchenDisplay">
-  <h2>หน้าจอครัว</h2>
+  <h2>ครัว</h2>
   <div class="kitchen-sections">
-    <div class="chef-section"><h3 style="color: #008CBA; border-bottom: 2px solid #008CBA; padding-bottom: 8px;">กิ๊ก</h3><div id="chef-kik" class="chef-orders"></div></div>
-    <div class="chef-section"><h3 style="color: #008CBA; border-bottom: 2px solid #008CBA; padding-bottom: 8px;">เจี๊ยบ</h3><div id="chef-jeab" class="chef-orders"></div></div>
-    <div class="chef-section"><h3 style="color: #008CBA; border-bottom: 2px solid #008CBA; padding-bottom: 8px;">พลโท</h3><div id="chef-nan" class="chef-orders"></div></div>
-    <div class="chef-section"><h3 style="color: #008CBA; border-bottom: 2px solid #008CBA; padding-bottom: 8px;">ซี</h3><div id="chef-see" class="chef-orders"></div></div>
+    <div class="chef-section"><h3>กิ๊ก</h3><div class="chef-orders" id="chef-kik"></div></div>
+    <div class="chef-section"><h3>เจี๊ยบ</h3><div class="chef-orders" id="chef-jeab"></div></div>
+    <div class="chef-section"><h3>พลโท</h3><div class="chef-orders" id="chef-nan"></div></div>
+    <div class="chef-section"><h3>ซี</h3><div class="chef-orders" id="chef-see"></div></div>
   </div>
 </div>
 
-<div id="tableOrders">
-      <h2>คิว</h2>
-      <table id="tableOrdersTable">
-          <thead>
-              <tr>
-                  <th>โต๊ะ</th>
-                  <th>รายการ</th>
-                  <th>จำนวน</th>
-                  <th>คอมเมนต์</th>
-                  <th>เวลารอ</th>
-                  <th>ส่ง</th>
-              </tr>
-          </thead>
-          <tbody></tbody>
-      </table>
-  </div>
+<div id="totalOrders"></div>
+<div id="completedOrders"></div>
 
-  <div id="totalOrders"></div>
-  <div id="completedOrders"></div>
-  
-  <div class="bottom-action-container">
-      <div><button class="order-button undo-button" onclick="undoLastComplete()">↩️ เรียกคืนรายการล่าสุด</button></div>
-      <div><button class="order-button clear-button" onclick="clearCompletedOrders()">🗑️ ล้างรายการที่เสร็จแล้ว</button></div>
-  </div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; padding: 10px;">
+  <button class="order-button" style="background-color: #e74c3c;" onclick="clearCompletedOrders()">ล้างรายการที่เสร็จแล้ว</button>
+  <button class="order-button undo-button" onclick="undoLastComplete()">เรียกคืนรายการล่าสุด</button>
+</div>
 
 <script>
-// Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyDskwJlUNbr3zkKnyY_-n582PdoCrts2AE",
-  authDomain: "supertest01-55ac2.firebaseapp.com",
-  databaseURL: "https://supertest01-55ac2-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "supertest01-55ac2",
-  storageBucket: "supertest01-55ac2.firebasestorage.app",
-  messagingSenderId: "846236839338",
-  appId: "1:846236839338:web:260ca9b6af72c69837cfd3",
-  measurementId: "G-F26Z20XG62"
+    apiKey: "AIzaSyDskwJlUNbr3zkKnyY_-n582PdoCrts2AE",
+    authDomain: "supertest01-55ac2.firebaseapp.com",
+    databaseURL: "https://supertest01-55ac2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "supertest01-55ac2",
+    storageBucket: "supertest01-55ac2.firebasestorage.app",
+    messagingSenderId: "846236839338",
+    appId: "1:846236839338:web:260ca9b6af72c69837cfd3"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const BASE_PATH = "racing_order_app/";
 
-// --- ส่วนที่แก้ไข: สร้าง Device ID เพื่อแยกตะกร้าพนักงานแต่ละคน ---
-let deviceId = localStorage.getItem('kaki_device_id');
-if (!deviceId) {
-    deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('kaki_device_id', deviceId);
-}
-
-const connectedRef = db.ref(".info/connected");
-const connectionStatus = document.getElementById('connectionStatus');
-connectedRef.on("value",snap=>{
-    connectionStatus.textContent=snap.val()?"เชื่อมต่อแล้ว ("+deviceId+")":"ไม่มีการเชื่อมต่อ";
-    connectionStatus.className=snap.val()?"connected":"disconnected";
-});
+let deviceId = localStorage.getItem('kaki_dev_id') || 'dev_' + Math.random().toString(36).substr(2, 9);
+localStorage.setItem('kaki_dev_id', deviceId);
 
 const chefMenus={'kik':['ต้มแซ่บ','คั่ว','ผักหวาน','แป๊ะซะ','แวะถัวะ','ผัดเผ็ด','อ่อม','แกงป่าผัก','แกงป่าหน่อไม้ดอง','แกงป่าหน่อไม้สด','บอน','มะรุม','กระบุก','แกงไก่หน่อ','แกงหมูหน่อ','แกงเนื้อหน่อ','แกงปลา','ผัดฉ่า','ปลาร้า','ไก่น้ำปลา','สามชั้น','หมูน้ำปลา','โสม','ผักหวานเห็ดเผาะ','ผักหวานไข่มดแดงใส่เห็ดเผาะ'],'jeab':['ไข่เจียว','แกงหอย','พิเศษ','ทอง','แถม','หมกหม้อ','ขี้เหล็ก','ต้มจืด','ทอดมัน','หมกปลานิล','ไก่หลงทาง'],'nan':['ขาหมู','ข้าว','ขนม','นึ่ง'],'see':['ลาบ','ปลาเนื้ออ่อน','ปลานิลแดดเดียว','สมุนไพร','สะเดาน้ำปลาหวาน','ตำ']};
 const nonBatchableMenuItems=['ปลาช่อนแป๊ะซะ','ปลาช่อนแวะถัวะ','อ่อมหมู','ผักหวานไข่มดแดง','ผักหวาน','ผักหวานเห็ดเผาะ','ผักหวานไข่มดแดงใส่เห็ดเผาะ','ไข่เจียวบาว','ไข่เจียวธรรมดา','ไข่เจียวหมูสับ','ไข่เจียวไข่มดแดง'];
 
-// สร้างลิสต์เมนูเริ่มต้น
-let orderCounts={}; 
-// ดึงรายชื่อเมนูจาก UI อัตโนมัติเพื่อไม่ต้องพิมพ์เยอะ
-document.querySelectorAll('.order-button').forEach(btn => {
-    const match = btn.getAttribute('onclick')?.match(/placeOrder\('(.+?)'\)/);
-    if(match) orderCounts[match[1]] = 0;
-});
+const menuCategories = {
+'ของทอด': ['ปลาเนื้ออ่อน', 'ปลานิลแดดเดียว', 'หมูทอดสมุนไพร', 'สะเดาน้ำปลาหวาน'],
+  
+  'คั่ว': ['คั่วไก่', 'คั่วกบ', 'คั่วเนื้อ', 'คั่วหมู', 'คั่วปลาไหล', 'คั่วเครื่องใน'],
+  
+  'ต้มแซ่บ': ['ต้มแซ่บไก่', 'ต้มแซ่บเนื้อ', 'ต้มแซ่บหมู', 'ต้มแซ่บกระดูกอ่อน', 'ต้มแซ่บเครื่องใน'],
+  
+  'ปลาช่อน': ['ปลาช่อนแป๊ะซะ', 'ปลาช่อนแวะถัวะ'],
+  
+  'ปลานึ่ง': ['ปลาช่อน นึ่ง', 'ปลานิล นึ่ง', 'ปลาทับทิม นึ่ง'],
+  
+  'ผัดเผ็ด': ['ผัดเผ็ดหมูป่า', 'ผัดเผ็ดกระดูกหมู', 'ผัดเผ็ดเครื่องใน', 'ผัดเผ็ดนกหน่อไม้', 'ผัดเผ็ดนกใบยี่หร่า'],
+  
+  'ลาบ': ['ลาบเป็ด', 'ลาบปลา', 'ลาบปู'],
+  
+  'อ่อม': ['อ่อมไก่', 'อ่อมกบ', 'อ่อมหมู', 'อ่อมเนื้อ', 'อ่อมหอย', 'อ่อมเครื่องใน', 'อ่อมนก'],
+  
+  'แกงป่าผัก': ['แกงป่าผักไก่', 'แกงป่าผักหมู', 'แกงป่าผักเนื้อ', 'แกงป่าผักปลา', 'แกงป่าผักเครื่องใน', 'แกงป่าผักนก'],
+  
+  'แกงป่าหน่อไม้ดอง': ['แกงป่าหน่อไม้ดองไก่', 'แกงป่าหน่อไม้ดองหมู', 'แกงป่าหน่อไม้ดองเนื้อ', 'แสงโสม', 'แกงป่าหน่อไม้ดองเครื่องใน', 'แกงป่าหน่อไม้ดองนก'],
+  
+  'แกงป่าหน่อไม้สด': ['แกงป่าหน่อไม้สดไก่', 'แกงป่าหน่อไม้สดหมู', 'แกงป่าหน่อไม้สดเนื้อ', 'แกงป่าหน่อไม้สดปลา', 'แกงป่าหน่อไม้สดเครื่องใน', 'แกงป่าหน่อไม้สดนก'],
+  
+  'ไข่เจียว': ['ไข่เจียวบาว', 'ไข่เจียวหมูสับ', 'ไข่เจียวธรรมดา', 'ไข่เจียวไข่มดแดง'],
+  
+  'แกงหน่อไม้ดอง': ['แกงไก่หน่อ', 'แกงหมูหน่อ', 'แกงเนื้อหน่อ'],
+  
+  'แกงปลาหน่อไม้ดอง': ['แกงปลากดหน่อ', 'แกงปลาหลดหน่อ', 'แกงปลานิลหน่อ', 'แกงปลาเนื้ออ่อนหน่อ'],
+  
+  'แกง': ['แกงบอน', 'มะรุม', 'กระบุก', 'แกงหอย'],
+  
+  'ผักหวาน': ['ผักหวาน', 'ผักหวานไข่มดแดง', 'ผักหวานเห็ดเผาะ', 'ผักหวานไข่มดแดงใส่เห็ดเผาะ'],
+  
+  'อื่นๆ': ['ขาหมู', 'ผัดฉ่าขาหมู', 'หมูปลาร้า', 'หมูน้ำปลา', 'ไก่ปลาร้า', 'ไก่น้ำปลา', 'ข้าว', 'ขนม', 'หงษ์ทอง', 'สามชั้นใบยี่หร่า', 'เมนูพิเศษ', 'ของแถม'],
+  
+  'เมนูพิเศษ': ['หมกหม้อ', 'ขี้เหล็ก', 'ต้มจืด', 'ทอดมัน', 'หมกปลานิล', 'ไก่หลงทาง'],
+  
+  'ส้มตำ': ['ตำลาว', 'ตำปูปลาล้าปูนิ่ง', 'ตำปูปลาล้าปูดอง', 'ตำแตง', 'ตำถั่ว', 'ตำไทย', 'ตำโคราช', 'ตำซั่ว', 'ตำป่า', 'ตำหมูยอ', 'ตำมาม่า', 'ตำไทยไข่เค็ม', 'ตำโพดไข่เค็ม', 'ตำกุ้งสด', 'ตำกุ้งสุกกกก', 'ตำทะเล']
 
-let tableOrderQueue=[],completedOrders=[],totalOrders={},orders=[],menuComments={},saveTimeout=null,waitingTimeInterval=null;
-let isStockMode = false, soldOutMap = {};
 
-window.addEventListener('load',()=>{
-    db.ref('orders').on('value',snap=>{orders=snap.val()||[]; showTableOrders(); updateWaitingTimes();});
-    db.ref('tableOrderQueue').on('value',snap=>{tableOrderQueue=snap.val()||[];});
-    db.ref('completedOrders').on('value',snap=>{completedOrders=snap.val()||[]; showCompletedOrders();});
-    db.ref('totalOrders').on('value',snap=>{totalOrders=snap.val()||{}; showTotalOrders();});
-    
-    // --- แก้ไข: ฟังเฉพาะ tempData ของเครื่องตัวเอง ---
-    db.ref('tempData/' + deviceId).on('value',snap=>{
-        const d=snap.val();
-        // รีเซ็ตจำนวนในหน้าจอก่อน
-        for(let i in orderCounts) {
-            orderCounts[i] = 0;
-            const e = document.getElementById('quantity'+i);
-            if(e) e.innerText = '0';
+};
+
+let orderCounts = {}, menuComments = {}, selectionOrder = [];
+let orders = [], completedOrders = [], totalOrders = {}, soldOutMap = {};
+let isStockMode = false;
+
+function createCategoryButtons() {
+    const container = document.getElementById('categoryButtons');
+    container.innerHTML = '';
+    for (const cat in menuCategories) {
+        const btn = document.createElement('button');
+        btn.className = 'category-button';
+        // --- แก้ไขจุดที่ 1: เพิ่มแกงปลาหน่อไม้ดองให้เป็นสีเหลือง ---
+        if (['แกงป่าผัก', 'แกงป่าหน่อไม้ดอง', 'แกงป่าหน่อไม้สด'].includes(cat)) {
+            btn.classList.add('category-blue');
+        } else if (['แกงหน่อไม้ดอง', 'แกงปลาหน่อไม้ดอง'].includes(cat)) {
+            btn.classList.add('category-yellow');
         }
-        if(d && d.orderCounts){
-            for(let i in d.orderCounts){
-                orderCounts[i] = d.orderCounts[i];
-                const e = document.getElementById('quantity'+i);
-                if(e) e.innerText = orderCounts[i];
-            }
-        }
-        menuComments=(d&&d.comments)?d.comments:{};
-        showSelectedItems();
-    });
-
-    db.ref('soldOutItems').on('value', snap => { soldOutMap = snap.val() || {}; updateSoldOutVisuals(); });
-    syncAllData();
-    if(waitingTimeInterval) clearInterval(waitingTimeInterval);
-    waitingTimeInterval=setInterval(updateWaitingTimes,30000);
-});
-
-// --- แก้ไข: เซฟลงที่อยู่เครื่องตัวเอง ---
-function saveTemporaryData(){
-    db.ref('tempData/' + deviceId).set({
-        orderCounts: orderCounts,
-        comments: menuComments
-    });
-}
-
-function showSelectedItems(){
-    const b=document.querySelector('#selectedItemsTable tbody');
-    b.innerHTML='';
-    for(let i in orderCounts){
-        if(orderCounts[i]>0){
-            const r=b.insertRow();
-            r.insertCell().textContent=i;
-            r.insertCell().textContent=orderCounts[i];
-            const a=r.insertCell();
-            const d=document.createElement('button'); d.textContent='-'; d.onclick=()=>decrementOrderCount(i); a.appendChild(d);
-            const n=document.createElement('button'); n.textContent='+'; n.onclick=()=>incrementOrderCount(i); a.appendChild(n);
-            const c=r.insertCell();
-            const m=document.createElement('input'); m.type='text'; m.placeholder='คอมเมนต์'; m.className='comment-input-selected'; m.value=menuComments[i]||'';
-            m.oninput=e=>{menuComments[i]=e.target.value; if(saveTimeout)clearTimeout(saveTimeout); saveTimeout=setTimeout(saveTemporaryData,1000);};
-            c.appendChild(m);
-        }
+        btn.textContent = cat;
+        btn.onclick = () => showMenuItems(cat);
+        container.appendChild(btn);
     }
 }
 
-function incrementOrderCount(i){ orderCounts[i]++; document.getElementById('quantity'+i).innerText=orderCounts[i]; showSelectedItems(); saveTemporaryData(); }
-function decrementOrderCount(i){ if(orderCounts[i]>0){ orderCounts[i]--; document.getElementById('quantity'+i).innerText=orderCounts[i]; showSelectedItems(); saveTemporaryData(); }}
+function showMenuItems(cat) {
+    document.getElementById('categorySection').style.display = 'none';
+    document.getElementById('menuSection').style.display = 'block';
+    document.getElementById('backToCategoryBtn').style.display = 'inline-block';
+    document.getElementById('currentCategoryName').textContent = cat;
+    const container = document.getElementById('menuButtons'); container.innerHTML = '';
+    menuCategories[cat].forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'order-button';
+        btn.innerHTML = `${item} <span id="quantity${item}">${orderCounts[item] || 0}</span>`;
+        btn.onclick = () => placeOrder(item);
+        if (soldOutMap[item]) btn.classList.add('sold-out');
+        container.appendChild(btn);
+    });
+}
 
-function placeOrder(p){
+function backToCategory() {
+    document.getElementById('categorySection').style.display = 'block';
+    document.getElementById('menuSection').style.display = 'none';
+}
+
+function saveTemporaryData() {
+    db.ref(BASE_PATH + 'tempData/' + deviceId).set({ orderCounts, comments: menuComments, selectionOrder });
+}
+
+function placeOrder(p) {
     if (isStockMode) {
-        soldOutMap[p] ? delete soldOutMap[p] : soldOutMap[p] = true;
-        db.ref('soldOutItems').set(soldOutMap);
+        db.ref(BASE_PATH + 'soldOutItems/' + p).set(!soldOutMap[p]);
         return;
     }
     if (soldOutMap[p]) return;
-    const b=document.querySelector(`button[onclick="placeOrder('${p}')"]`);
-    if(b) flashButton(b);
-    orderCounts[p]++;
-    document.getElementById('quantity'+p).innerText=orderCounts[p];
-    showSelectedItems();
+    orderCounts[p] = (orderCounts[p] || 0) + 1;
+    if (!selectionOrder.includes(p)) selectionOrder.push(p);
     saveTemporaryData();
 }
 
-// --- แก้ไข: เมื่อบันทึกโต๊ะ ให้ล้าง tempData เฉพาะของเครื่องตัวเอง ---
-function saveTable(t){
-    const c=new Date().toISOString();
-    let n=[];
-    for(let i in orderCounts){
-        if(orderCounts[i]>0){
-            n.push({table:t, item:i, quantity:orderCounts[i], comment:menuComments[i]?menuComments[i].trim():'', timestamp:c});
-            totalOrders[i]=(totalOrders[i]||0)+orderCounts[i];
+function showSelectedItems() {
+    const tbody = document.querySelector('#selectedItemsTable tbody');
+    if (document.activeElement && document.activeElement.classList.contains('comment-input-selected')) return;
+    tbody.innerHTML = '';
+    selectionOrder.forEach(i => {
+        if (orderCounts[i] > 0) {
+            const r = tbody.insertRow();
+            r.insertCell().textContent = i; r.insertCell().textContent = orderCounts[i];
+            const a = r.insertCell();
+            a.innerHTML = `<button class="order-button" style="width:40px; background:#e74c3c;" onclick="decrementOrderCount('${i}')">-</button>
+                           <button class="order-button" style="width:40px; background:#2ecc71;" onclick="incrementOrderCount('${i}')">+</button>`;
+            const cCell = r.insertCell();
+            const input = document.createElement('input');
+            input.className = 'comment-input-selected'; input.value = menuComments[i] || '';
+            input.oninput = (e) => { 
+                menuComments[i] = e.target.value; 
+                db.ref(BASE_PATH + 'tempData/' + deviceId + '/comments/' + i).set(e.target.value);
+            };
+            cCell.appendChild(input);
         }
-    }
-    if(n.length>0){
-        orders=orders.concat(n);
-        if(!tableOrderQueue.includes(t)) tableOrderQueue.push(t);
-        db.ref().update({
-            orders: orders,
-            tableOrderQueue: tableOrderQueue,
-            totalOrders: totalOrders
-        });
-        // ล้างเฉพาะเครื่องตัวเอง
-        db.ref('tempData/' + deviceId).remove();
-    }
+    });
 }
 
-function saveReservationTable() {
-    const tableName = prompt("ชื่อโต๊ะ/เบอร์โทร (จอง):");
-    if (tableName && tableName.trim() !== "") {
-        const finalTableName = tableName.trim();
-        const priorityTime = new Date(Date.now() - 86400000).toISOString(); 
-        let newOrders = [];
-        for (let i in orderCounts) {
-            if (orderCounts[i] > 0) {
-                newOrders.push({table: finalTableName, item: i, quantity: orderCounts[i], comment: menuComments[i] ? menuComments[i].trim() : '', timestamp: priorityTime});
-                totalOrders[i] = (totalOrders[i] || 0) + orderCounts[i];
+function incrementOrderCount(i) { orderCounts[i]++; saveTemporaryData(); }
+function decrementOrderCount(i) { 
+    if(orderCounts[i]>0) orderCounts[i]--; 
+    if(orderCounts[i]===0) selectionOrder = selectionOrder.filter(x => x !== i);
+    saveTemporaryData(); 
+}
+
+function saveTable(t, isRes = false) {
+    const timestamp = isRes ? new Date(Date.now() - 86400000).toISOString() : new Date().toISOString();
+    selectionOrder.forEach(i => {
+        if (orderCounts[i] > 0) {
+            db.ref(BASE_PATH + 'orders').push({
+                table: t, item: i, quantity: orderCounts[i], comment: (menuComments[i] || '').trim(), timestamp: timestamp
+            });
+            totalOrders[i] = (totalOrders[i] || 0) + orderCounts[i];
+        }
+    });
+    db.ref(BASE_PATH + 'totalOrders').set(totalOrders);
+    db.ref(BASE_PATH + 'tempData/' + deviceId).remove();
+}
+
+function handleComplete(orderId) {
+    const o = orders.find(x => x.id === orderId);
+    if (!o) return;
+    if (o.quantity > 1) {
+        db.ref(BASE_PATH + 'completedOrders').push({ ...o, quantity: 1, completedAt: new Date().toISOString() });
+        db.ref(BASE_PATH + 'orders/' + orderId + '/quantity').set(o.quantity - 1);
+        if (totalOrders[o.item]) totalOrders[o.item] = Math.max(0, totalOrders[o.item] - 1);
+    } else {
+        db.ref(BASE_PATH + 'completedOrders').push({ ...o, completedAt: new Date().toISOString() });
+        if (totalOrders[o.item]) totalOrders[o.item] = Math.max(0, totalOrders[o.item] - 1);
+        db.ref(BASE_PATH + 'orders/' + orderId).remove();
+    }
+    db.ref(BASE_PATH + 'totalOrders').set(totalOrders);
+}
+
+function undoLastComplete() {
+    db.ref(BASE_PATH + 'completedOrders').limitToLast(1).once('value', snap => {
+        if (!snap.exists()) return;
+        const id = Object.keys(snap.val())[0];
+        const data = snap.val()[id];
+        delete data.completedAt; delete data.id;
+        db.ref(BASE_PATH + 'orders').push(data);
+        totalOrders[data.item] = (totalOrders[data.item] || 0) + data.quantity;
+        db.ref(BASE_PATH + 'totalOrders').set(totalOrders);
+        db.ref(BASE_PATH + 'completedOrders/' + id).remove();
+    });
+}
+
+function showTableOrders() {
+    const tbody = document.querySelector('#tableOrdersTable tbody');
+    tbody.innerHTML = '';
+    const sorted = [...orders].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    sorted.forEach(o => {
+        const r = tbody.insertRow();
+        const mins = Math.floor((new Date() - new Date(o.timestamp)) / 60000);
+        
+        // --- ส่วนที่เพิ่มใหม่: เช็คสถานะอาหารเสร็จ ---
+        const isReady = o.status === 'ready';
+        if (isReady) {
+            r.style.backgroundColor = '#d4edda'; // สีเขียวอ่อน
+            r.style.fontWeight = 'bold';
+        } else if (mins >= 10) {
+            r.className = 'wait-long';
+        } else if (mins >= 5) {
+            r.className = 'wait-medium';
+        }
+        // --------------------------------------
+
+        r.insertCell().textContent = 'โต๊ะ ' + o.table;
+        
+        // ใส่ชื่อเมนู (ถ้าเสร็จแล้วให้ขีดฆ่า)
+        const itemCell = r.insertCell();
+        if (isReady) {
+           itemCell.innerHTML = `<span style="color: #155724; font-weight: bold;">✅ ${o.item} (เสร็จแล้ว!)</span>`;
+        } else {
+            itemCell.textContent = o.item;
+        }
+
+        r.insertCell().textContent = o.quantity;
+        
+        const cCell = r.insertCell();
+        cCell.innerHTML = `<input value="${o.comment || ''}" onchange="db.ref('${BASE_PATH}orders/${o.id}/comment').set(this.value)" style="width:70px">`;
+        
+        r.insertCell().textContent = mins + ' นาที';
+        
+        const btn = document.createElement('button');
+        btn.className = 'order-button complete-button'; 
+        btn.textContent = isReady ? 'พร้อมส่ง' : 'ส่ง';
+        // ถ้าเสร็จแล้วให้ปุ่มสีเข้มขึ้น
+        if (isReady) btn.style.backgroundColor = '#28a745';
+        
+        btn.onclick = () => handleComplete(o.id);
+        r.insertCell().appendChild(btn);
+    });
+}
+
+// ค้นหาฟังก์ชัน showTotalOrders ในไฟล์ index.html แล้วนำโค้ดนี้ไปทับครับ
+function showTotalOrders() {
+    const t = document.getElementById('totalOrders'); t.innerHTML = '<h2>เมนูซ้ำ</h2>';
+    const b = {};
+    
+    // 1. จัดกลุ่ม และเก็บเวลาที่เก่าที่สุดของกลุ่มนั้นไว้
+    orders.forEach(o => {
+        const k = nonBatchableMenuItems.includes(o.item) ? `${o.item}-${o.timestamp}` : `${o.item}-${o.comment}`;
+        if (!b[k]) b[k] = { item: o.item, comment: o.comment, reg: 0, th: 0, minTs: o.timestamp };
+        
+        // เก็บเวลาที่น้อยที่สุด (เก่าที่สุด) เพื่อใช้เรียงลำดับ
+        if (new Date(o.timestamp) < new Date(b[k].minTs)) b[k].minTs = o.timestamp;
+        
+        /[ก-๙]/.test(o.table) ? b[k].th += o.quantity : b[k].reg += o.quantity;
+    });
+
+    // 2. แปลงเป็น Array แล้วเรียงลำดับตาม minTs (ใครเวลาเก่ากว่า/แซงคิว อยู่บน)
+    const sortedGroups = Object.values(b).sort((x, y) => new Date(x.minTs) - new Date(y.minTs));
+
+    // 3. แสดงผล
+    sortedGroups.forEach(i => {
+        const C = i.comment ? ` (${i.comment})` : '';
+        let d = `${i.th + i.reg},${i.item}${C} ${i.reg}${i.th > 0 ? ', ก '+i.th : ''}`;
+        const p = document.createElement('p'); p.textContent = d; t.appendChild(p);
+    });
+    updateKitchenDisplay();
+}
+
+function updateKitchenDisplay() {
+    ['kik', 'jeab', 'nan', 'see'].forEach(c => document.getElementById(`chef-${c}`).innerHTML = '');
+    document.querySelectorAll('#totalOrders p').forEach(p => {
+        for (const [c, menus] of Object.entries(chefMenus)) {
+            if (menus.some(m => p.textContent.includes(m))) {
+                document.getElementById(`chef-${c}`).innerHTML += `<div>${p.textContent}</div>`;
+                break;
             }
         }
-        if (newOrders.length > 0) {
-            orders = orders.concat(newOrders);
-            db.ref().update({ orders: orders, totalOrders: totalOrders });
-            db.ref('tempData/' + deviceId).remove(); // ล้างเฉพาะเครื่องตัวเอง
-        }
+    });
+}
+
+function changeTableName(){
+    const o=document.getElementById('oldTableName').value.trim(), n=document.getElementById('newTableName').value.trim();
+    if(o&&n){
+        orders.forEach(d => { if(d.table === o) db.ref(BASE_PATH + 'orders/' + d.id + '/table').set(n); });
+        document.getElementById('oldTableName').value=''; document.getElementById('newTableName').value='';
     }
 }
 
-function clearSelectedItems(){
-    for(let i in orderCounts){
-        orderCounts[i]=0;
-        const e=document.getElementById('quantity'+i);
-        if(e) e.innerText='0';
-    }
-    menuComments={};
-    db.ref('tempData/' + deviceId).remove();
+function showCompletedOrders() {
+    const e = document.getElementById('completedOrders'); e.innerHTML = '<h2>เสร็จแล้ว</h2>';
+    completedOrders.slice().reverse().slice(0, 15).forEach(o => {
+        e.innerHTML += `<p>โต๊ะ ${o.table}: ${o.item} ${o.comment ? '('+o.comment+')' : ''}</p>`;
+    });
 }
 
-// --- ส่วนฟังก์ชันอื่นๆ คงเดิมตามต้นฉบับ ---
 function toggleStockMode() {
     isStockMode = !isStockMode;
     const btn = document.getElementById('stockModeBtn');
@@ -645,136 +445,74 @@ function toggleStockMode() {
     btn.className = isStockMode ? "order-button stock-button stock-mode-active" : "order-button stock-button";
 }
 
-function updateSoldOutVisuals() {
-    document.querySelectorAll('button[onclick^="placeOrder"]').forEach(btn => {
-        const match = btn.getAttribute('onclick').match(/placeOrder\('(.+?)'\)/);
-        if (match && match[1]) {
-            soldOutMap[match[1]] ? btn.classList.add('sold-out') : btn.classList.remove('sold-out');
-        }
+function clearCompletedOrders() { if(confirm('ล้างรายการที่เสร็จแล้ว?')) db.ref(BASE_PATH + 'completedOrders').remove(); }
+
+window.addEventListener('load', () => {
+    initTables();
+    createCategoryButtons();
+    db.ref(BASE_PATH + 'orders').on('value', snap => {
+        const val = snap.val();
+        orders = val ? Object.entries(val).map(([id, data]) => ({ id, ...data })) : [];
+        showTableOrders(); showTotalOrders();
     });
-}
-
-function completeOrder(o) {
-    completedOrders.push({table: o.table, item: o.item, comment: o.comment || '', timestamp: new Date().toISOString(), originalTimestamp: o.timestamp});
-    if (totalOrders[o.item]) {
-        totalOrders[o.item] -= o.quantity;
-        if (totalOrders[o.item] <= 0) delete totalOrders[o.item];
-    }
-    const idx = orders.findIndex(d => d.timestamp === o.timestamp && d.table === o.table && d.item === o.item);
-    if (idx !== -1) orders.splice(idx, 1);
-    db.ref().update({ orders: orders, completedOrders: completedOrders, totalOrders: totalOrders });
-}
-
-function undoLastComplete() {
-    if (!completedOrders.length) return;
-    const last = completedOrders.pop();
-    orders.push({table: last.table, item: last.item, quantity: 1, comment: last.comment, timestamp: last.originalTimestamp || last.timestamp});
-    totalOrders[last.item] = (totalOrders[last.item] || 0) + 1;
-    orders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    db.ref().update({ orders: orders, completedOrders: completedOrders, totalOrders: totalOrders });
-}
-
-function showTableOrders() {
-    const tbody = document.querySelector('#tableOrdersTable tbody');
-    tbody.innerHTML = '';
-    const sorted = [...orders].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    sorted.forEach(order => {
-        const row = tbody.insertRow();
-        row.insertCell().textContent = 'โต๊ะ ' + order.table;
-        row.insertCell().textContent = order.item;
-        row.insertCell().textContent = order.quantity;
-        const cCell = row.insertCell();
-        const ci = document.createElement('input'); ci.className='comment-input-queue'; ci.value=order.comment||''; cCell.appendChild(ci);
-        const sb = document.createElement('button'); sb.textContent='บันทึก'; sb.className='save-comment-button';
-        sb.onclick = () => {
-            order.comment = ci.value.trim();
-            db.ref('orders').set(orders).then(() => { sb.classList.add('saved'); flashButton(sb); });
-        };
-        cCell.appendChild(sb);
-        const wtCell = row.insertCell(); wtCell.className = 'waiting-time-cell';
-        const cpCell = row.insertCell();
-        const cBtn = document.createElement('button'); cBtn.className='order-button complete-button'; cBtn.textContent='ส่ง';
-        cBtn.onclick = () => {
-            if (order.quantity > 1) {
-                completedOrders.push({table: order.table, item: order.item, comment: order.comment||'', timestamp: new Date().toISOString(), originalTimestamp: order.timestamp});
-                order.quantity--;
-                if (totalOrders[order.item]) totalOrders[order.item]--;
-                db.ref().update({ orders: orders, completedOrders: completedOrders, totalOrders: totalOrders });
-            } else { completeOrder(order); }
-        };
-        cpCell.appendChild(cBtn);
+    db.ref(BASE_PATH + 'completedOrders').on('value', snap => {
+        const val = snap.val();
+        completedOrders = val ? Object.values(val) : [];
+        showCompletedOrders();
     });
-    updateWaitingTimes();
-}
-
-function updateWaitingTimes() {
-    const rows = document.querySelectorAll('#tableOrdersTable tbody tr');
-    const sorted = [...orders].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
-    rows.forEach((row,i)=>{
-        if(i < sorted.length){
-            const order=sorted[i];
-            const cell=row.querySelector('.waiting-time-cell');
-            if(!cell) return;
-            const mins=Math.floor((new Date()-new Date(order.timestamp))/60000);
-            cell.textContent=mins+' นาที';
-            row.className = mins>=10 ? 'wait-long' : (mins>=5 ? 'wait-medium' : 'wait-normal');
-        }
+    db.ref(BASE_PATH + 'totalOrders').on('value', snap => { totalOrders = snap.val() || {}; });
+    db.ref(BASE_PATH + 'soldOutItems').on('value', snap => {
+        soldOutMap = snap.val() || {};
+        document.querySelectorAll('.order-button').forEach(btn => {
+            const itemName = btn.innerText.split(' ')[0];
+            if (soldOutMap[itemName]) btn.classList.add('sold-out'); else btn.classList.remove('sold-out');
+        });
     });
-}
-
-function showTotalOrders(){
-    let t=document.getElementById('totalOrders'); t.innerHTML='<h2>เมนูซ้ำ</h2>';
-    const batch={}; const nonBatch=[];
-    orders.forEach(o => {
-        if(nonBatchableMenuItems.includes(o.item)) nonBatch.push({...o});
-        else {
-            const k = `${o.item}-${o.comment||''}`;
-            if(!batch[k]) batch[k] = {item:o.item, comment:o.comment, reg:0, take:0, time:o.timestamp};
-            hasThaiCharacters(o.table) ? batch[k].take += o.quantity : batch[k].reg += o.quantity;
-        }
-    });
-    // แสดงผลสรุป (Logic เดียวกับของเดิมคุณ)
-    for(let k in batch) {
-        let g = batch[k]; let total = g.reg + g.take;
-        let txt = total + "," + g.item + (g.comment?` (${g.comment})`:'') + " " + g.reg + (g.take>0 ? ", ก "+g.take : "");
-        t.innerHTML += `<p>${txt}</p>`;
-    }
-    nonBatch.forEach(o => {
-        let txt = o.quantity + "," + o.item + (o.comment?` (${o.comment})`:'') + (hasThaiCharacters(o.table) ? " 0, ก "+o.quantity : " "+o.quantity);
-        t.innerHTML += `<p>${txt}</p>`;
-    });
-    updateKitchenDisplay();
-}
-
-function hasThaiCharacters(s){ return /[ก-๙]/.test(String(s)); }
-
-function updateKitchenDisplay(){
-    ['kik','jeab','nan','see'].forEach(c => document.getElementById(`chef-${c}`).innerHTML='');
-    document.querySelectorAll('#totalOrders p').forEach(p => {
-        const txt = p.textContent;
-        for(const [chef, menus] of Object.entries(chefMenus)){
-            if(menus.some(m => txt.includes(m))){
-                const div = document.createElement('div'); div.className='chef-summary'; div.textContent=txt;
-                document.getElementById(`chef-${chef}`).appendChild(div);
-                break;
+    db.ref(BASE_PATH + 'tempData/' + deviceId).on('value', snap => {
+        const d = snap.val() || {};
+        // --- แก้ไขจุดที่ 2: ล้างตัวเลขบนปุ่มทิ้งเมื่อไม่มีข้อมูลในตะกร้า ---
+        if (!snap.exists()) {
+            orderCounts = {}; menuComments = {}; selectionOrder = [];
+            // สั่ง Reset ตัวเลขบนปุ่มเมนูทั้งหมดให้เป็น 0
+            document.querySelectorAll('[id^="quantity"]').forEach(span => span.innerText = '0');
+        } else {
+            orderCounts = d.orderCounts || {}; menuComments = d.comments || {}; selectionOrder = d.selectionOrder || [];
+            // อัปเดตตัวเลขตามข้อมูลปัจจุบัน
+            for(let i in orderCounts) {
+                const el = document.getElementById('quantity' + i);
+                if(el) el.innerText = orderCounts[i];
             }
         }
+        showSelectedItems();
     });
-}
+    db.ref(".info/connected").on("value", snap => {
+    const statusBar = document.getElementById('syncStatusBar');
+    const statusText = document.getElementById('syncStatusText');
+    
+    if (snap.val()) {
+        // ออนไลน์ - สีเขียว
+        statusText.textContent = "ออนไลน์ (ID: " + deviceId + ")";
+        statusBar.classList.remove('offline'); // ลบคลาส offline
+    } else {
+        // ออฟไลน์ - สีแดง
+        statusText.textContent = "ออฟไลน์";
+        statusBar.classList.add('offline'); // เพิ่มคลาส offline
+    }
+});
+    setInterval(showTableOrders, 30000);
+});
 
-function syncAllData(){
-    db.ref('orders').once('value').then(s => { orders=s.val()||[]; showTableOrders(); showTotalOrders(); });
-}
-
-function flashButton(b){ b.classList.remove('flash-red','flash-green'); void b.offsetWidth; b.classList.add(b.classList.contains('saved')?'flash-green':'flash-red'); }
-function clearCompletedOrders(){ if(confirm('ต้องการล้างรายการที่เสร็จแล้วใช่หรือไม่?')){ db.ref('completedOrders').set([]); }}
-function changeTableName(){
-    const o=document.getElementById('oldTableName').value.trim();
-    const n=document.getElementById('newTableName').value.trim();
-    if(o && n){
-        orders.forEach(d => { if(d.table===o) d.table=n; });
-        db.ref('orders').set(orders);
-        document.getElementById('oldTableName').value=''; document.getElementById('newTableName').value='';
+function initTables() {
+    const container = document.getElementById('tableButtons');
+    const resBtn = document.createElement('button');
+    resBtn.className = 'table-button reservation-button'; resBtn.textContent = 'โต๊ะจอง';
+    resBtn.onclick = () => { let t = prompt("ชื่อโต๊ะจอง:"); if(t) saveTable(t, true); };
+    container.appendChild(resBtn);
+    for (let i = 1; i <= 25; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'table-button'; btn.textContent = 'โต๊ะ ' + i;
+        btn.onclick = () => saveTable(i.toString());
+        container.appendChild(btn);
     }
 }
 </script>
