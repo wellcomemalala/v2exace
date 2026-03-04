@@ -646,8 +646,16 @@ window.addEventListener('load', () => {
         if (snap.exists()) {
             const requests = snap.val();
             
-            // วนลูปสร้างกล่องแจ้งเตือนตามจำนวนโต๊ะที่เรียกเก็บเงิน
-            Object.keys(requests).forEach(tableNo => {
+            // 1. แปลงข้อมูลจาก Firebase ให้เป็น Array ก่อน
+            const requestsArray = Object.values(requests);
+            
+            // 2. สั่งเรียงลำดับตามเวลา (Timestamp) ใครเรียกก่อน (เวลาเก่าน้อยกว่า) ให้อยู่คิวแรก
+            requestsArray.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // 3. วนลูปสร้างกล่องแจ้งเตือนตามคิวที่จัดเรียงแล้ว
+            requestsArray.forEach(requestData => {
+                const tableNo = requestData.table; // ดึงเลขโต๊ะออกมาจากข้อมูล
+                
                 const alertCard = document.createElement('div');
                 alertCard.className = 'bill-alert-card';
                 
@@ -657,7 +665,7 @@ window.addEventListener('load', () => {
                 const clearBtn = document.createElement('button');
                 clearBtn.className = 'clear-bill-btn';
                 clearBtn.innerText = 'เคลียร์';
-                clearBtn.onclick = () => clearBill(tableNo);
+                clearBtn.onclick = () => clearBill(tableNo); // ส่งเลขโต๊ะไปให้ปุ่มเคลียร์
                 
                 alertCard.appendChild(textSpan);
                 alertCard.appendChild(clearBtn);
