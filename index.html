@@ -73,6 +73,72 @@
   
   
   
+  
+  /* ================= สไตล์ระบบเก็บเงิน ================= */
+  #billingSystemContainer {
+    background-color: #fff3e0;
+    border: 2px dashed #e67e22;
+    border-radius: 8px;
+    margin: 45px auto 10px auto; /* ดันลงมาไม่ให้ทับแถบสถานะออนไลน์ */
+    padding: 15px;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  #billingInputSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  #billTableInput {
+    width: 80px;
+    font-size: 20px;
+    padding: 8px;
+    border: 2px solid #e67e22;
+    border-radius: 6px;
+    text-align: center;
+  }
+  #billingAlertsSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .bill-alert-card {
+    background-color: #ffeaa7;
+    border: 2px solid #fdcb6e;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #d35400;
+    animation: pulseAlert 1.5s infinite; /* ทำให้กล่องกระพริบเบาๆ ดึงดูดสายตา */
+  }
+  @keyframes pulseAlert {
+    0% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(230, 126, 34, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); }
+  }
+  .clear-bill-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  /* ================= จบสไตล์ระบบเก็บเงิน ================= */
+  
+  
+  
+  
+  
 </style>
 </head>
 <body>
@@ -80,6 +146,19 @@
 <div id="syncStatusBar">
   <span id="syncStatusText">เชื่อมต่อแล้ว</span>
 </div>
+
+<!-- ================= ส่วนระบบเรียกเก็บเงิน (Check Bill) ================= -->
+<div id="billingSystemContainer">
+  <div id="billingInputSection">
+    <span style="font-weight: bold; color: #d35400;">💰 เรียกเช็คบิล: </span>
+    <input type="text" id="billTableInput" placeholder="เลขโต๊ะ" autocomplete="off">
+    <button class="order-button" style="background-color: #e67e22; width: auto; padding: 10px 15px; margin: 0;" onclick="requestBill()">แจ้งเตือน</button>
+  </div>
+  <div id="billingAlertsSection"></div>
+</div>
+<!-- ================= จบส่วนระบบเรียกเก็บเงิน ================= -->
+
+
 
 <div style="margin-top: 35px; margin-bottom: 15px; text-align: right;">
     <button id="stockModeBtn" class="order-button stock-button" onclick="toggleStockMode()" style="width: auto; padding: 10px 20px;">จัดการของหมด (ปิด)</button>
@@ -159,11 +238,11 @@ const BASE_PATH = "racing_order_app/";
 let deviceId = localStorage.getItem('kaki_dev_id') || 'dev_' + Math.random().toString(36).substr(2, 9);
 localStorage.setItem('kaki_dev_id', deviceId);
 
-const chefMenus={'kik':['ต้มแซ่บ','คั่ว','ผักหวาน','แป๊ะซะ','แวะถัวะ','ผัดเผ็ด','อ่อม','แกงป่าผัก','แกงป่าหน่อไม้ดอง','แกงป่าหน่อไม้สด','บอน','มะรุม','กระบุก','แกงไก่หน่อ','แกงหมูหน่อ','แกงเนื้อหน่อ','แกงปลา','ผัดฉ่า','ปลาร้า','ไก่น้ำปลา','สามชั้น','หมูน้ำปลา','โสม','ผักหวานเห็ดเผาะ','ผักหวานไข่มดแดงใส่เห็ดเผาะ'],'jeab':['ไข่เจียว','แกงหอย','พิเศษ','ทอง','แถม','หมกหม้อ','ขี้เหล็ก','ต้มจืด','ทอดมัน','หมกปลานิล','ไก่หลงทาง'],'nan':['ขาหมู','ข้าว','ขนม','นึ่ง'],'see':['ลาบ','ปลาเนื้ออ่อน','ปลานิลแดดเดียว','สมุนไพร','สะเดาน้ำปลาหวาน','ตำ']};
+const chefMenus={'kik':['ต้มแซ่บ','คั่ว','ผักหวาน','แป๊ะซะ','แวะถัวะ','ผัดเผ็ด','อ่อม','แกงป่าผัก','แกงป่าหน่อไม้ดอง','แกงป่าหน่อไม้สด','บอน','มะรุม','กระบุก','แกงไก่หน่อ','แกงหมูหน่อ','แกงเนื้อหน่อ','แกงปลา','ผัดฉ่า','ปลาร้า','ไก่น้ำปลา','สามชั้น','หมูน้ำปลา','โสม','ผักหวานเห็ดเผาะ','ผักหวานไข่มดแดงใส่เห็ดเผาะ'],'jeab':['ไข่เจียว','แกงหอย','พิเศษ','ทอง','แถม','หมกหม้อ','ขี้เหล็ก','ต้มจืด','ทอดมัน','หมกปลานิล','ไก่หลงทาง'],'nan':['ขาหมู','ข้าว','ขนม','นึ่ง'],'see':['ลาบ','ปลาเนื้ออ่อน','ปลานิลแดดเดียว','สมุนไพร','สะเดาน้ำปลาหวาน','ตำ','ปลาหลด']};
 const nonBatchableMenuItems=['ปลาช่อนแป๊ะซะ','ปลาช่อนแวะถัวะ','อ่อมหมู','ผักหวานไข่มดแดง','ผักหวาน','ผักหวานเห็ดเผาะ','ผักหวานไข่มดแดงใส่เห็ดเผาะ','ไข่เจียวบาว','ไข่เจียวธรรมดา','ไข่เจียวหมูสับ','ไข่เจียวไข่มดแดง'];
 
 const menuCategories = {
-'ของทอด': ['ปลาเนื้ออ่อน', 'ปลานิลแดดเดียว', 'หมูทอดสมุนไพร', 'สะเดาน้ำปลาหวาน'],
+'ของทอด': ['ปลาเนื้ออ่อน', 'ปลานิลแดดเดียว', 'หมูทอดสมุนไพร', 'สะเดาน้ำปลาหวาน', 'ปลาหลด'],
   
   'คั่ว': ['คั่วไก่', 'คั่วกบ', 'คั่วเนื้อ', 'คั่วหมู', 'คั่วปลาไหล', 'คั่วเครื่องใน'],
   
@@ -197,6 +276,7 @@ const menuCategories = {
   
   'อื่นๆ': ['ขาหมู', 'ผัดฉ่าขาหมู', 'หมูปลาร้า', 'หมูน้ำปลา', 'ไก่ปลาร้า', 'ไก่น้ำปลา', 'ข้าว', 'ขนม', 'หงษ์ทอง', 'สามชั้นใบยี่หร่า', 'เมนูพิเศษ', 'ของแถม'],
   
+  
   'เมนูพิเศษ': ['หมกหม้อ', 'ขี้เหล็ก', 'ต้มจืด', 'ทอดมัน', 'หมกปลานิล', 'ไก่หลงทาง'],
   
   'ส้มตำ': ['ตำลาว', 'ตำปูปลาล้าปูนิ่ง', 'ตำปูปลาล้าปูดอง', 'ตำแตง', 'ตำถั่ว', 'ตำไทย', 'ตำโคราช', 'ตำซั่ว', 'ตำป่า', 'ตำหมูยอ', 'ตำมาม่า', 'ตำไทยไข่เค็ม', 'ตำโพดไข่เค็ม', 'ตำกุ้งสด', 'ตำกุ้งสุกกกก', 'ตำทะเล']
@@ -211,10 +291,20 @@ let isStockMode = false;
 function createCategoryButtons() {
     const container = document.getElementById('categoryButtons');
     container.innerHTML = '';
+
+    // --- ส่วนที่เพิ่มใหม่: ปุ่มขาหมูแบบสั่งทันที ---
+    const fastBtn = document.createElement('button');
+    fastBtn.className = 'category-button';
+    // ตั้งค่าสีแดงเพื่อให้ต่างจากหมวดหมู่ปกติ
+    fastBtn.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'; 
+    fastBtn.innerHTML = `ขาหมู <span id="quantityขาหมู">${orderCounts['ขาหมู'] || 0}</span>`;
+    fastBtn.onclick = () => placeOrder('ขาหมู'); // กดแล้วสั่งทันที
+    container.appendChild(fastBtn);
+    // -----------------------------------------
+
     for (const cat in menuCategories) {
         const btn = document.createElement('button');
         btn.className = 'category-button';
-        // --- แก้ไขจุดที่ 1: เพิ่มแกงปลาหน่อไม้ดองให้เป็นสีเหลือง ---
         if (['แกงป่าผัก', 'แกงป่าหน่อไม้ดอง', 'แกงป่าหน่อไม้สด'].includes(cat)) {
             btn.classList.add('category-blue');
         } else if (['แกงหน่อไม้ดอง', 'แกงปลาหน่อไม้ดอง'].includes(cat)) {
@@ -515,6 +605,68 @@ function initTables() {
         container.appendChild(btn);
     }
 }
+
+
+
+
+// ================= ฟังก์ชันระบบเรียกเก็บเงิน (Stand-alone) =================
+
+// 1. เวลากดปุ่ม "แจ้งเตือน"
+function requestBill() {
+    const tableInput = document.getElementById('billTableInput');
+    const tableNo = tableInput.value.trim();
+    
+    if (!tableNo) {
+        alert('กรุณาใส่เลขโต๊ะก่อนกดแจ้งเตือนครับ');
+        return;
+    }
+    
+    // บันทึกลง Firebase (สร้างฐานข้อมูลย่อยชื่อ billing_requests ไม่ปนกับ orders)
+    db.ref(BASE_PATH + 'billing_requests/' + tableNo).set({
+        table: tableNo,
+        timestamp: new Date().toISOString()
+    });
+    
+    tableInput.value = ''; // เคลียร์ช่องพิมพ์
+}
+
+// 2. เวลากดปุ่ม "เคลียร์" (ลบเฉพาะการแจ้งเตือน ไม่ออเดอร์ไม่หาย)
+function clearBill(tableNo) {
+    if(confirm('เคลียร์บิลโต๊ะ ' + tableNo + ' เรียบร้อยแล้วใช่ไหม?')) {
+        db.ref(BASE_PATH + 'billing_requests/' + tableNo).remove();
+    }
+}
+
+// 3. ระบบรอรับข้อมูลแบบ Realtime ให้โชว์กล่องแจ้งเตือนทันที
+window.addEventListener('load', () => {
+    db.ref(BASE_PATH + 'billing_requests').on('value', snap => {
+        const alertsSection = document.getElementById('billingAlertsSection');
+        alertsSection.innerHTML = ''; // ล้างจอเก่า
+        
+        if (snap.exists()) {
+            const requests = snap.val();
+            
+            // วนลูปสร้างกล่องแจ้งเตือนตามจำนวนโต๊ะที่เรียกเก็บเงิน
+            Object.keys(requests).forEach(tableNo => {
+                const alertCard = document.createElement('div');
+                alertCard.className = 'bill-alert-card';
+                
+                const textSpan = document.createElement('span');
+                textSpan.innerHTML = `🔔 โต๊ะ ${tableNo}`;
+                
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'clear-bill-btn';
+                clearBtn.innerText = 'เคลียร์';
+                clearBtn.onclick = () => clearBill(tableNo);
+                
+                alertCard.appendChild(textSpan);
+                alertCard.appendChild(clearBtn);
+                alertsSection.appendChild(alertCard);
+            });
+        }
+    });
+});
+// ================= จบระบบเรียกเก็บเงิน =================
 </script>
 </body>
 </html>
